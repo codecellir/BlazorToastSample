@@ -1,0 +1,32 @@
+.toast {
+    position: absolute;
+    z-index: 1080;
+    background: #fff;
+    padding: 10px;
+    padding: 0;
+
+    button {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+    }
+
+    .toast-body {
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+        align-items: center;
+
+        i {
+            font-size: 35px;
+        }
+
+        h6 {
+            font-size: 14px;
+            text-align: center;
+            line-height: 25px;
+            font-weight: 400;
+            color: #fff;
+        }
+    }
+}

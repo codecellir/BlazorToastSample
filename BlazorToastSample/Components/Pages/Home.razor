@@ -1,0 +1,11 @@
+﻿@page "/"
+@inject ToastService toastService
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+<button class="btn btn-info" @onclick="@(() => toastService.ShowToast("message from codecell.ir", ToastLevel.Info))">Info Toast</button>
+<button class="btn btn-success" @onclick="@(() => toastService.ShowToast("SUCCESS message from codecell.ir", ToastLevel.Success))">Success Toast</button>
+<button class="btn btn-warning" @onclick="@(() => toastService.ShowToast("WARNING message from codecell.ir", ToastLevel.Warning))">Warning Toast</button>
+<button class="btn btn-danger" @onclick="@(() => toastService.ShowToast("ERROR message from codecell.ir", ToastLevel.Error))">Error Toast</button>

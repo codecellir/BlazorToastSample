@@ -1,0 +1,90 @@
+﻿@inject ToastService ToastService
+@implements IDisposable
+<div class="toast @_backgroundCssClass" style="display:@_toastDisplay;@_posiotion">
+    <button @onclick=Close type="button" class="btn-close"></button>
+    <div class="toast-body">
+        <i class="@_iconClass"></i>
+        <h6>@_message</h6>
+    </div>
+</div>
+
+@code {
+    string _toastDisplay = "none";
+    string _iconClass;
+    private string? _message;
+    string _posiotion;
+    string? _backgroundCssClass;
+
+    PeriodicTimer _timer;
+
+    [Parameter]
+    public ToastPosition Position { get; set; } = ToastPosition.TopLeft;
+
+    [Parameter]
+    public byte CloseTime { get; set; } = 3;
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnShow += ShowAsync;
+        ToastService.OnClose += Close;
+    }
+
+    private async void ShowAsync(string message,ToastLevel level)
+    {
+        _timer?.Dispose();
+
+        _message = message;
+
+        _iconClass = level switch
+        {
+            ToastLevel.Info => "bi bi-info-circle-fill text-white",
+            ToastLevel.Success => "bi bi-check-circle-fill text-white",
+            ToastLevel.Warning => "bi bi-exclamation-circle-fill text-white",
+            ToastLevel.Error => "bi bi-x-circle-fill text-white",
+            _ => "bi bi-info-circle-fill text-white"
+        };
+
+        _backgroundCssClass = level switch
+        {
+            ToastLevel.Info => "bg-info",
+            ToastLevel.Success => "bg-success",
+            ToastLevel.Warning => "bg-warning",
+            ToastLevel.Error => "bg-danger",
+            _ => "bg-info"
+        };
+
+        _posiotion = Position switch
+        {
+            ToastPosition.TopLeft => "top: 15px;left: 15px;",
+            ToastPosition.TopRight => "top: 15px;right: 15px;",
+            ToastPosition.BottomLeft => "bottom: 15px;left: 15px;",
+            ToastPosition.BottomRight => "bottom: 15px;right: 15px;",
+            ToastPosition.Center => "top: 50%;left: 50%;transform: translate(-50%, -50%);",
+            _ => "top: 15px;left: 15px;"
+        };
+
+        _toastDisplay = "block";
+
+        StateHasChanged();
+
+        _timer = new PeriodicTimer(TimeSpan.FromSeconds(CloseTime));
+
+        while (await _timer.WaitForNextTickAsync())
+        {
+            Close();
+            StateHasChanged();
+            break;
+        }
+    }
+    private void Close()
+    {
+        _timer?.Dispose();
+        _toastDisplay = "none";
+    }
+    void IDisposable.Dispose()
+    {
+        _timer?.Dispose();
+        ToastService.OnShow -= ShowAsync;
+        ToastService.OnClose -= Close;
+    }
+}
